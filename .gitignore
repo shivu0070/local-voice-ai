@@ -1,0 +1,20 @@
+# Heavy / regenerable: never commit
+# (.venv recreated from requirements.txt; models downloaded — see README)
+.venv/
+models/
+node_modules/
+frontend/node_modules/
+frontend/.next/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Backup archives (kept locally, not published; GitHub rejects >100 MB files anyway)
+*.zip
+
+# Claude Code working dir (contains local session transcripts)
+.claude/
+
+# Everything else — including .env.local — is committed on purpose so the
+# config is visible for local-use reference.

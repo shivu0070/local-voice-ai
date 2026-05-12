@@ -1,0 +1,20 @@
+{
+  "intent": "book",
+  "final": {
+    "patient_name": "Shivansh",
+    "phone": "7018213168",
+    "doctor": "Dr Amal",
+    "date": "2026-01-31",
+    "time": "09:00"
+  },
+  "is_committed": true,
+  "commit_evidence": "yes",
+  "confidence": {
+    "intent": 1.0,
+    "patient_name": 1.0,
+    "doctor": 1.0,
+    "date": 1.0,
+    "time": 1.0
+  },
+  "contradictions": []
+}
