@@ -1,0 +1,20 @@
+{
+  "intent": "",
+  "final": {
+    "patient_name": "",
+    "phone": "",
+    "doctor": "",
+    "date": "",
+    "time": ""
+  },
+  "is_committed": false,
+  "commit_evidence": "",
+  "confidence": {
+    "intent": 0.0,
+    "patient_name": 0.0,
+    "doctor": 0.0,
+    "date": 0.0,
+    "time": 0.0
+  },
+  "contradictions": []
+}

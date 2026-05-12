@@ -1,0 +1,3 @@
+booking_id,created_at,updated_at,status,patient_name,phone,doctor,date,time,source_session_id
+6ed8eb70446b49bb97907fa3e05e7f86,2026-01-29T16:38:23+00:00,2026-01-29T16:38:23+00:00,booked,,,Dr Khan,[today’s date],10:00,2a23c7b4a9b242e98e1395a0c03cff01
+767fbfe1e4ed45cc8cbe688df73bd479,2026-01-29T17:17:02+00:00,2026-01-30T04:45:47+00:00,booked,shivansh,,Dr Amal,2026-01-31,09:00,9375dd42c4904fe5a9b0590ecb5332de

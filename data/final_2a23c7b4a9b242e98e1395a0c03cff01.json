@@ -1,0 +1,20 @@
+{
+  "intent": "book",
+  "final": {
+    "patient_name": "",
+    "phone": "",
+    "doctor": "Dr Khan",
+    "date": "[today\u2019s date]",
+    "time": "10:00"
+  },
+  "is_committed": true,
+  "commit_evidence": "yes",
+  "confidence": {
+    "intent": 1.0,
+    "patient_name": 0.0,
+    "doctor": 1.0,
+    "date": 0.8,
+    "time": 1.0
+  },
+  "contradictions": []
+}
