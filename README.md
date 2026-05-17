@@ -1,8 +1,6 @@
 # Local Voice AI Assistant
 
-<video src="https://github.com/shivu0070/local-voice-ai/raw/main/demo.mp4" controls width="640"></video>
-
-**▶ [Watch the demo](https://github.com/shivu0070/local-voice-ai/raw/main/demo.mp4)**
+https://github.com/user-attachments/assets/92743f6d-186e-42b4-b9c2-ff00c44f2c8f
 
 A fully-local, real-time voice assistant. Speak to it, it speaks back — no cloud APIs, no external services, everything runs on a single PC.
 
