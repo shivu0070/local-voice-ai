@@ -10,6 +10,9 @@ frontend/.next/
 __pycache__/
 *.pyc
 
+# Local env (real runtime config — copy from .env.example)
+.env.local
+
 # Backup archives (kept locally, not published; GitHub rejects >100 MB files anyway)
 *.zip
 

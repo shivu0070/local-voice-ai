@@ -54,7 +54,13 @@ Models aren't committed (they're large). Download:
 
 ### 4) Environment
 
-The config lives in `.env.local` at the repo root (already in the repo as a reference). Defaults match the local LiveKit dev key — no changes needed for a local run.
+Copy the example config and you're done — the defaults match the local LiveKit dev key, so no edits are needed for a local run:
+
+```powershell
+copy .env.example .env.local
+```
+
+`.env.local` is gitignored (it's where your runtime config lives). `.env.example` is the committed reference everyone clones.
 
 ## Run it
 
