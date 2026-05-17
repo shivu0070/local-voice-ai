@@ -111,4 +111,8 @@ mic audio → LiveKit room → AgentSession
 
 ## Demo
 
-*(Recording coming soon.)*
+
+
+https://github.com/user-attachments/assets/92743f6d-186e-42b4-b9c2-ff00c44f2c8f
+
+
