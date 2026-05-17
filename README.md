@@ -2,6 +2,10 @@
 
 A fully-local, real-time voice assistant. Speak to it, it speaks back — no cloud APIs, no external services, everything runs on a single PC.
 
+**▶ [Watch the demo](https://github.com/shivu0070/local-voice-ai/raw/main/demo.mp4)** (~30 s)
+
+<video src="https://github.com/shivu0070/local-voice-ai/raw/main/demo.mp4" controls width="640"></video>
+
 **Stack:**
 - **LiveKit Server** (local WebRTC SFU) — `livekit_server/livekit-server.exe`
 - **faster-whisper** (STT) — `large-v3-turbo` on CUDA
@@ -109,6 +113,3 @@ mic audio → LiveKit room → AgentSession
                                           LiveKit ──► speaker
 ```
 
-## Demo
-
-*(Recording coming soon.)*
