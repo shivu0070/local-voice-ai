@@ -117,3 +117,19 @@ mic audio → LiveKit room → AgentSession
                                           LiveKit ──► speaker
 ```
 
+## Design decisions
+
+A few non-obvious choices in this codebase and the reasoning behind each — every one of these started as a measurable latency problem and ended in a concrete fix.
+
+**TTS synthesis pipelined with playback, not serialized.** Naively, `synthesize(N) → play(N) → synthesize(N+1) → play(N+1)` leaves a ~150–400 ms silence between every chunk (Piper subprocess spawn + ONNX model load). The speaker worker keeps one synthesis task in flight while the current chunk plays out, so the next chunk's audio is ready before the current one finishes. Result: no inter-chunk gaps, no buffer underruns, smooth speech.
+
+**Silero VAD runs on CPU, not the GPU it could.** With both Whisper and Silero on CUDA, Silero fell 0.6–2.8 s behind realtime — the per-chunk GPU round-trip cost more than the inference itself, and it was competing with Whisper for the device. Silero is small enough that a single CPU core handles it faster than realtime. Counterintuitive but visible in the latency logs.
+
+**A separate VAD on `AgentSession` for barge-in.** The StreamAdapter wrapping Whisper has its own VAD for STT segmentation, but `AgentSession(vad=None)` meant the session had no fast speech detector and waited for the *final* transcript (≥ 650 ms silence + decode) before cutting off TTS. Giving the session its own VAD plus `min_interruption_duration=0.2 s` brings TTS cut-off down to roughly one word of user speech.
+
+**Single-chunk synthesis lookahead, not deeper.** Buffering more than one chunk ahead just makes barge-in messier — every queued chunk has to be cancelled on interrupt. One ahead is enough to hide synth latency under playback, no more.
+
+**Early first-clause flush.** Sentence-by-sentence TTS would wait for the first `.!?` before speaking; for long opening sentences that's seconds of dead air. The token loop flushes the opening clause at the first comma/colon after ~50 characters, then falls back to sentence boundaries. Audio starts the moment the first thought has formed.
+
+**No manual frame pacing.** An earlier version paced the audio generator with `await asyncio.sleep(20 ms)` per 20 ms frame, but Windows' timer granularity is ~15 ms and the slop caused intermittent buffer underruns (audible glitches). LiveKit's `AudioSource` already buffers and paces at exact realtime with backpressure, so the generator now just yields and trusts it.
+
