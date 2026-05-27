@@ -1,0 +1,3 @@
+# XTTS v2 sandbox deps — install into voice/.venv-xtts (NOT the agent's .venv).
+# For GPU, install CUDA torch BEFORE this (see voice/README.md).
+coqui-tts

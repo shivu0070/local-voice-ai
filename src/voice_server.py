@@ -25,6 +25,7 @@ from pathlib import Path
 from typing import AsyncIterator, List, Optional
 
 import numpy as np
+from scipy.signal import lfilter
 
 from livekit import rtc
 from livekit.agents import (
@@ -101,11 +102,8 @@ def _highpass_filter(signal: np.ndarray, cutoff_hz: float, fs: int) -> np.ndarra
     rc = 1.0 / (2.0 * np.pi * float(cutoff_hz))
     dt = 1.0 / float(fs)
     alpha = rc / (rc + dt)
-    out = np.empty_like(signal, dtype=np.float32)
-    out[0] = signal[0]
-    for n in range(1, signal.size):
-        out[n] = alpha * (out[n - 1] + signal[n] - signal[n - 1])
-    return out
+    # y[n] = alpha*(y[n-1] + x[n] - x[n-1])  ->  b=[alpha,-alpha], a=[1,-alpha]
+    return lfilter([alpha, -alpha], [1.0, -alpha], signal).astype(np.float32)
 
 
 def _rms_normalize(signal: np.ndarray, target_dbfs: Optional[float]) -> np.ndarray:
@@ -148,11 +146,8 @@ def _lowpass_filter(signal: np.ndarray, cutoff_hz: float, fs: int) -> np.ndarray
     rc = 1.0 / (2.0 * np.pi * float(cutoff_hz))
     dt = 1.0 / float(fs)
     alpha = dt / (rc + dt)
-    out = np.empty_like(signal, dtype=np.float32)
-    out[0] = signal[0]
-    for n in range(1, signal.size):
-        out[n] = out[n - 1] + alpha * (signal[n] - out[n - 1])
-    return out
+    # y[n] = (1-alpha)*y[n-1] + alpha*x[n]  ->  b=[alpha], a=[1,-(1-alpha)]
+    return lfilter([alpha], [1.0, -(1.0 - alpha)], signal).astype(np.float32)
 
 
 def _speech_boost(signal: np.ndarray, fs: int, f_low: float, f_high: float, gain_db: float) -> np.ndarray:
@@ -178,13 +173,7 @@ def _speech_boost(signal: np.ndarray, fs: int, f_low: float, f_high: float, gain
     b2 /= a0
     a1 /= a0
     a2 /= a0
-    out = np.empty_like(signal, dtype=np.float32)
-    x1 = x2 = y1 = y2 = 0.0
-    for i, x0 in enumerate(signal):
-        y0 = b0 * x0 + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2
-        out[i] = y0
-        x2, x1 = x1, x0
-        y2, y1 = y1, y0
+    out = lfilter([b0, b1, b2], [1.0, a1, a2], signal).astype(np.float32)
     gain_lin = 10.0 ** (gain_db / 20.0)
     return (signal + (out * (gain_lin - 1.0))).astype(np.float32)
 
@@ -668,6 +657,12 @@ class LocalWhisperSTT(lk_stt.STT):
         language=NOT_GIVEN,
         conn_options=DEFAULT_API_CONNECT_OPTIONS,
     ) -> lk_stt.SpeechEvent:
+        # Run DSP + Whisper transcribe in a worker thread so they never block the
+        # asyncio event loop. Blocking it here starved the VAD's audio processing,
+        # making it fall seconds behind realtime and inflating transcript_delay.
+        return await asyncio.to_thread(self._recognize_blocking, buffer, language)
+
+    def _recognize_blocking(self, buffer, language=NOT_GIVEN) -> lk_stt.SpeechEvent:
         stt_t0 = time.monotonic()
         # Merge frames and resample to target_sr.
         merged = merge_frames(buffer)
