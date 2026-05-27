@@ -21,7 +21,15 @@ class OllamaClient:
       thread (e.g. barge-in) can cancel generation by closing the socket.
     """
 
-    def __init__(self, base_url: str = "http://localhost:11434", timeout_s: int = 120) -> None:
+    def __init__(self, base_url: Optional[str] = None, timeout_s: int = 120) -> None:
+        # Default to 127.0.0.1 (NOT "localhost"): on Windows, Python's requests
+        # tries IPv6 ::1 first for "localhost" and stalls ~2.3s before falling
+        # back to IPv4 — a fixed per-request tax. Override with OLLAMA_HOST
+        # (e.g. "ollama:11434" in Docker).
+        if base_url is None:
+            base_url = os.getenv("OLLAMA_HOST") or "http://127.0.0.1:11434"
+        if not base_url.startswith(("http://", "https://")):
+            base_url = "http://" + base_url
         self.base_url = base_url.rstrip("/")
         self.timeout_s = timeout_s
 
@@ -115,6 +123,9 @@ class OllamaClient:
         if options:
             payload["options"] = options
 
+        _probe_t0 = time.monotonic()
+        _probe_first = True
+
         # Requests timeouts:
         # - connect timeout avoids hanging if Ollama isn't reachable
         # - read timeout is optional; for streaming we typically leave it as None
@@ -190,11 +201,30 @@ class OllamaClient:
                     continue
 
                 if obj.get("done"):
+                    try:
+                        _ms = lambda k: obj.get(k, 0) / 1e6
+                        print(
+                            f"[OLLAMA_DONE] load_ms={_ms('load_duration'):.0f} "
+                            f"prompt_eval_ms={_ms('prompt_eval_duration'):.0f} "
+                            f"prompt_tok={obj.get('prompt_eval_count', 0)} "
+                            f"eval_ms={_ms('eval_duration'):.0f} "
+                            f"eval_tok={obj.get('eval_count', 0)} "
+                            f"total_ms={_ms('total_duration'):.0f}",
+                            flush=True,
+                        )
+                    except Exception:
+                        pass
                     break
 
                 msg = obj.get("message") or {}
                 tok = msg.get("content") or ""
                 if tok:
+                    if _probe_first:
+                        _probe_first = False
+                        try:
+                            print(f"[OLLAMA_PROBE] post_to_first_token_ms={(time.monotonic()-_probe_t0)*1000:.0f}", flush=True)
+                        except Exception:
+                            pass
                     yield tok
         except KeyboardInterrupt:
             # Graceful stop on Ctrl+C
