@@ -1,6 +1,6 @@
 # Local Voice AI Assistant
 
-> © 2026 [Shiv Thakur](https://shivu0070.github.io/portfolio/) — MIT License
+> © 2026 [Shivansh Thakur](https://shivu0070.github.io/portfolio/) — MIT License with Attribution Requirement
 
 <video src="video.mp4" controls width="100%"></video>
 
