@@ -19,5 +19,13 @@ __pycache__/
 # Claude Code working dir (contains local session transcripts)
 .claude/
 
+# voice/ XTTS sandbox — isolated venv, generated audio, and reference clips
+# (reference clips are local-only: large + likely copyrighted movie audio)
+voice/.venv-xtts/
+voice/out*.wav
+voice/refs/*.wav
+voice/refs/*.mp3
+voice/refs/*.flac
+
 # Everything else — including .env.local — is committed on purpose so the
 # config is visible for local-use reference.

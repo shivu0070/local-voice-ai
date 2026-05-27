@@ -1,6 +1,6 @@
 # Local Voice AI Assistant
 
-https://github.com/user-attachments/assets/92743f6d-186e-42b4-b9c2-ff00c44f2c8f
+<video src="video.mp4" controls width="100%"></video>
 
 A fully-local, real-time voice assistant. Speak to it, it speaks back — no cloud APIs, no external services, everything runs on a single PC.
 
@@ -17,7 +17,6 @@ A fully-local, real-time voice assistant. Speak to it, it speaks back — no clo
 - Sub-second barge-in (Silero VAD cuts off TTS within ~one word of you speaking)
 - TTS prefetch pipeline (synthesizes the next chunk while the current one plays — no inter-chunk gaps)
 - Streaming LLM → sentence-by-sentence TTS so audio starts as soon as the first clause is generated
-- Two brain modes: `chat` (streaming) and `router` (JSON tool-calls)
 
 ## Prerequisites
 
