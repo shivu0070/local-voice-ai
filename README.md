@@ -1,5 +1,7 @@
 # Local Voice AI Assistant
 
+> © 2026 [Shiv Thakur](https://shivu0070.github.io/portfolio/) — MIT License
+
 <video src="video.mp4" controls width="100%"></video>
 
 A fully-local, real-time voice assistant. Speak to it, it speaks back — no cloud APIs, no external services, everything runs on a single PC.
