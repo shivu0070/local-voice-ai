@@ -2,7 +2,7 @@
 
 > © 2026 [Shivansh Thakur](https://shivu0070.github.io/portfolio/) — MIT License with Attribution Requirement
 
-<video src="video.mp4" controls width="100%"></video>
+<video src="https://github.com/shivu0070/local-voice-ai/raw/main/testvid.mp4" controls width="640"></video>
 
 A fully-local, real-time voice assistant. Speak to it, it speaks back — no cloud APIs, no external services, everything runs on a single PC.
 
